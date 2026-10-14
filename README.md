@@ -222,6 +222,7 @@ php artisan db:seed --class=UserSeeder
 | GET | `/` | — | Redirige al login |
 | GET | `/dashboard` | `dashboard` | Autenticado (redirige a su panel) |
 | GET | `/encargado/dashboard` | `encargado.dashboard` | Encargado |
+| GET | `/encargado/equipos/create` | `equipos.create` | Encargado |
 | POST | `/encargado/equipos` | `equipos.store` | Encargado |
 | GET | `/encargado/equipos/{equipo}/edit` | `equipos.edit` | Encargado |
 | PUT | `/encargado/equipos/{equipo}` | `equipos.update` | Encargado |
@@ -236,7 +237,8 @@ El registro público (`/register`) está comentado.
 
 ### Vistas
 
-- `resources/views/encargado/dashboard.blade.php` → panel del Encargado (inventario + registrar + editar/eliminar).
+- `resources/views/encargado/dashboard.blade.php` → panel del Encargado (inventario con acceso a registrar, editar y eliminar).
+- `resources/views/encargado/equipos/create.blade.php` → formulario de registro de equipos.
 - `resources/views/encargado/equipos/edit.blade.php` → formulario de edición de equipos.
 - `resources/views/estudiante/dashboard.blade.php` → panel del Estudiante (disponibles para solicitar + sus préstamos para devolver).
 - `resources/views/errors/base-datos.blade.php` → vista amigable cuando falla la base de datos.

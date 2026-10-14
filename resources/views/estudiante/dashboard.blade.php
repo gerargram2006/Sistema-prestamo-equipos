@@ -28,10 +28,10 @@
                 </div>
             @endif
 
-            <!-- Equipos disponibles: el estudiante puede solicitarlos -->
+            <!-- ===================== Equipos Disponibles ===================== -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-semibold mb-4">Equipos disponibles para préstamo</h3>
+                    <h3 class="text-lg font-semibold mb-4">Equipos disponibles</h3>
 
                     <div class="overflow-x-auto">
                         <table class="min-w-full border border-gray-200 text-sm">
@@ -45,7 +45,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($equipos as $equipo)
+                                @forelse ($equiposDisponibles as $equipo)
                                     <tr>
                                         <td class="border px-3 py-2">{{ $equipo->codigo }}</td>
                                         <td class="border px-3 py-2">{{ $equipo->nombre }}</td>
@@ -54,7 +54,6 @@
                                             <span class="bg-green-600 text-white px-2 py-1 rounded text-xs">{{ $equipo->estado }}</span>
                                         </td>
                                         <td class="border px-3 py-2">
-                                            <!-- Solicitar el equipo (el préstamo queda a nombre del estudiante) -->
                                             <form action="{{ route('equipos.prestar', $equipo) }}" method="POST">
                                                 @csrf
                                                 <button type="submit"
@@ -77,10 +76,10 @@
                 </div>
             </div>
 
-            <!-- Mis equipos prestados: el estudiante puede devolverlos -->
+            <!-- ===================== Mis Préstamos ===================== -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-semibold mb-4">Mis equipos prestados</h3>
+                    <h3 class="text-lg font-semibold mb-4">Mis préstamos</h3>
 
                     <div class="overflow-x-auto">
                         <table class="min-w-full border border-gray-200 text-sm">
@@ -94,7 +93,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($misEquipos as $equipo)
+                                @forelse ($misPrestamos as $equipo)
                                     <tr>
                                         <td class="border px-3 py-2">{{ $equipo->codigo }}</td>
                                         <td class="border px-3 py-2">{{ $equipo->nombre }}</td>
@@ -103,7 +102,6 @@
                                             <span class="bg-red-600 text-white px-2 py-1 rounded text-xs">{{ $equipo->estado }}</span>
                                         </td>
                                         <td class="border px-3 py-2">
-                                            <!-- Devolver el equipo -->
                                             <form action="{{ route('equipos.devolver', $equipo) }}" method="POST">
                                                 @csrf
                                                 <button type="submit"

@@ -19,10 +19,9 @@ Route::get('/dashboard', function () {
 // Rutas del Encargado: gestión completa de equipos (ver, registrar, editar, eliminar).
 Route::middleware(['auth', 'rol:encargado'])->prefix('encargado')->group(function () {
     Route::get('/dashboard', [EquipoController::class, 'indexEncargado'])->name('encargado.dashboard');
-    Route::post('/equipos', [EquipoController::class, 'store'])->name('equipos.store');
-    Route::get('/equipos/{equipo}/edit', [EquipoController::class, 'edit'])->name('equipos.edit');
-    Route::put('/equipos/{equipo}', [EquipoController::class, 'update'])->name('equipos.update');
-    Route::delete('/equipos/{equipo}', [EquipoController::class, 'destroy'])->name('equipos.destroy');
+
+    // CRUD de equipos: equipos.create, equipos.store, equipos.edit, equipos.update y equipos.destroy.
+    Route::resource('equipos', EquipoController::class)->except(['index', 'show']);
 });
 
 // Rutas del Estudiante: consultar disponibles, solicitar y devolver.

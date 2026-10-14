@@ -29,7 +29,15 @@ class EquipoController extends Controller
     }
 
     /**
-     * Registrar un equipo nuevo. Siempre inicia como Disponible.
+     * Mostrar el formulario de registro de un equipo nuevo.
+     */
+    public function create()
+    {
+        return view('encargado.equipos.create');
+    }
+
+    /**
+     * Registrar un equipo nuevo.
      */
     public function store(Request $request)
     {
@@ -37,17 +45,14 @@ class EquipoController extends Controller
             'codigo' => ['required', 'string', 'max:50', 'unique:equipos,codigo'],
             'nombre' => ['required', 'string', 'max:255'],
             'categoria' => ['required', 'string', 'max:255'],
+            'estado' => ['required', Rule::in(['Disponible', 'Prestado'])],
         ], $this->mensajes());
 
         try {
-            Equipo::create([
-                'codigo' => $datos['codigo'],
-                'nombre' => $datos['nombre'],
-                'categoria' => $datos['categoria'],
-                'estado' => 'Disponible',
-            ]);
+            Equipo::create($datos);
 
-            return back()->with('success', 'Equipo registrado con éxito.');
+            return redirect()->route('encargado.dashboard')
+                ->with('success', 'Equipo registrado con éxito.');
         } catch (QueryException $e) {
             report($e);
 
@@ -114,18 +119,18 @@ class EquipoController extends Controller
     public function indexEstudiante()
     {
         try {
-            $equipos = Equipo::where('estado', 'Disponible')->orderBy('codigo')->get();
+            $equiposDisponibles = Equipo::where('estado', 'Disponible')->orderBy('codigo')->get();
 
             // Equipos que el estudiante autenticado tiene prestados (para poder devolverlos).
-            $misEquipos = Equipo::where('estudiante_id', auth()->id())->orderBy('codigo')->get();
+            $misPrestamos = Equipo::where('estudiante_id', auth()->id())->orderBy('codigo')->get();
 
-            return view('estudiante.dashboard', compact('equipos', 'misEquipos'));
+            return view('estudiante.dashboard', compact('equiposDisponibles', 'misPrestamos'));
         } catch (QueryException $e) {
             report($e);
 
             return view('estudiante.dashboard', [
-                'equipos' => collect(),
-                'misEquipos' => collect(),
+                'equiposDisponibles' => collect(),
+                'misPrestamos' => collect(),
             ])->with('error', 'No se pudo cargar la información. Intenta nuevamente en unos minutos.');
         }
     }

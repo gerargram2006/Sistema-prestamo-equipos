@@ -39,31 +39,16 @@
                 </div>
             @endif
 
-            <!-- Registrar nuevo equipo -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-semibold mb-4">Registrar nuevo equipo</h3>
-
-                    <form action="{{ route('equipos.store') }}" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                        @csrf
-                        <input type="text" name="codigo" value="{{ old('codigo') }}" placeholder="Código (ej: LAP-003)"
-                               class="border-gray-300 rounded shadow-sm" required>
-                        <input type="text" name="nombre" value="{{ old('nombre') }}" placeholder="Nombre (ej: Laptop Lenovo)"
-                               class="border-gray-300 rounded shadow-sm" required>
-                        <input type="text" name="categoria" value="{{ old('categoria') }}" placeholder="Categoría (ej: Laptop)"
-                               class="border-gray-300 rounded shadow-sm" required>
-                        <button type="submit"
-                                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
-                            Guardar equipo
-                        </button>
-                    </form>
-                </div>
-            </div>
-
             <!-- Inventario de equipos -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-semibold mb-4">Inventario de equipos</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Inventario de equipos</h3>
+                        <a href="{{ route('equipos.create') }}"
+                           class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm">
+                            Nuevo equipo
+                        </a>
+                    </div>
 
                     <div class="overflow-x-auto">
                         <table class="min-w-full border border-gray-200 text-sm">
