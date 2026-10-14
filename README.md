@@ -1,4 +1,4 @@
-# Sistema de Préstamo de Equipos de Laboratorio
+    # Sistema de Préstamo de Equipos de Laboratorio
 
 Aplicación web desarrollada con **Laravel** para gestionar el préstamo de equipos de laboratorio (laptops, proyectores, kits de electrónica, multímetros, etc.) entre un **encargado** y los **estudiantes**.
 
