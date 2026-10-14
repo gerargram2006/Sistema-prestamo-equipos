@@ -1,8 +1,8 @@
 # Sistema de Préstamo de Equipos de Laboratorio
 
-Aplicación web desarrollada con **Laravel** para gestionar el préstamo de equipos de laboratorio (laptops, proyectores, kits de electrónica, multímetros, etc.) entre un **encargado** y los **estudiantes**.
+Aplicación web desarrollada con **Laravel** para gestionar el préstamo de equipos de laboratorio (laptops, proyectores, kits de electrónica, multímetros, etc.) entre un **Encargado** y los **Estudiantes**.
 
-El proyecto parte de una instalación de **Laravel Breeze** (autenticación por sesión) y sobre ella se fueron agregando el rol de usuario, la tabla de equipos y los seeders de datos.
+El proyecto parte de una instalación de **Laravel Breeze** (autenticación por sesión) y sobre ella se agregaron los roles de usuario, la tabla de equipos, los seeders de datos y todo el módulo de préstamos con sus paneles por rol.
 
 ---
 
@@ -18,6 +18,35 @@ El proyecto parte de una instalación de **Laravel Breeze** (autenticación por 
 | Frontend | Vite + Tailwind CSS + Alpine.js |
 | Tests | PHPUnit `^12.x` |
 | Formato de código | Laravel Pint |
+
+---
+
+## Funcionalidades
+
+- **Ingreso con correo y contraseña.** Solo usuarios registrados. Si las credenciales son incorrectas se muestra un mensaje claro en español.
+- **Ninguna página interna es accesible sin sesión.** Todo redirige al login. Opción de cerrar sesión.
+- **Dos roles con paneles distintos**, cada uno mostrando el nombre y el rol del usuario:
+  - **Encargado:** registra, lista, edita, elimina equipos y gestiona préstamos y devoluciones.
+  - **Estudiante:** solo consulta los equipos **disponibles** (modo lectura, sin acciones de modificación).
+- **Gestión de equipos** con código, nombre, categoría y estado (`Disponible` / `Prestado`).
+- **Préstamos y devoluciones:** prestar un equipo a un estudiante lo deja en `Prestado`; devolverlo lo vuelve a `Disponible`. No se permite eliminar un equipo que está prestado.
+- **Formularios seguros:** validación, protección CSRF y consultas mediante Eloquent (sin SQL concatenado).
+- **Manejo de errores de base de datos:** si la BD falla, el usuario ve una vista amigable y nunca un error técnico.
+
+---
+
+## Roles y permisos
+
+| Acción | Encargado | Estudiante |
+| --- | :---: | :---: |
+| Ver todos los equipos | Sí | No |
+| Ver solo equipos disponibles | Sí | Sí |
+| Registrar equipo | Sí | No |
+| Editar equipo | Sí | No |
+| Eliminar equipo (si no está prestado) | Sí | No |
+| Prestar / devolver equipo | Sí | No |
+
+La protección se aplica con el middleware `CheckRole` (alias `rol`), registrado en `bootstrap/app.php`. Si un usuario intenta entrar a un panel que no le corresponde, se le redirige automáticamente a su propio panel.
 
 ---
 
@@ -67,6 +96,17 @@ DB_USERNAME=root
 DB_PASSWORD=tu_password
 ```
 
+### Idioma
+
+El proyecto está configurado en español. Verifica en tu `.env`:
+
+```env
+APP_LOCALE=es
+APP_FALLBACK_LOCALE=en
+```
+
+> Los mensajes de autenticación en español están en `lang/es/auth.php`.
+
 > **Nota para MariaDB en Ubuntu/WSL:** si al migrar ves
 > `SQLSTATE[HY000] [1698] Access denied for user 'root'@'localhost'`, es porque el
 > usuario `root` usa el plugin `unix_socket` y no acepta contraseña por TCP.
@@ -110,6 +150,8 @@ Creados por `UserSeeder`:
 | Estudiante Dos | `estudiante2@tecsup.edu.pe` | `estudiante123` | `estudiante` |
 
 > La contraseña se cifra automáticamente gracias al cast `password => hashed` del modelo `User`.
+>
+> El **registro público está desactivado**: los usuarios se cargan por seeder.
 
 ---
 
@@ -154,12 +196,17 @@ php artisan db:seed --class=UserSeeder
 
 ### Base de datos
 
-- **`users`**: se agregó la columna `rol`
-  (`enum('encargado','estudiante')`, por defecto `estudiante`).
+- **`users`**: columna `rol` (`enum('encargado','estudiante')`, por defecto `estudiante`).
 - **`equipos`**:
   - `codigo` (único), `nombre`, `categoria`.
   - `estado` (`enum('Disponible','Prestado')`, por defecto `Disponible`).
   - `estudiante_id` (FK nullable a `users`, `nullOnDelete`).
+
+### Controladores y middleware
+
+- `app/Http/Controllers/EquipoController.php` → paneles, CRUD de equipos y préstamos/devoluciones.
+- `app/Http/Middleware/CheckRole.php` → restringe el acceso según el rol (alias `rol`).
+- `bootstrap/app.php` → registra el alias y el respaldo global ante errores de base de datos.
 
 ### Seeders
 
@@ -169,17 +216,47 @@ php artisan db:seed --class=UserSeeder
 
 ### Rutas
 
-| Método | Ruta | Descripción |
-| --- | --- | --- |
-| GET | `/` | Página de bienvenida |
-| GET | `/dashboard` | Panel principal (requiere autenticación) |
-| GET | `/login`, `/register` | Autenticación (Breeze) |
-| GET/PATCH/DELETE | `/profile` | Gestión del perfil del usuario |
+| Método | Ruta | Nombre | Acceso |
+| --- | --- | --- | --- |
+| GET | `/` | — | Redirige al login |
+| GET | `/dashboard` | `dashboard` | Autenticado (redirige a su panel) |
+| GET | `/encargado/dashboard` | `encargado.dashboard` | Encargado |
+| POST | `/encargado/equipos` | `equipos.store` | Encargado |
+| GET | `/encargado/equipos/{equipo}/edit` | `equipos.edit` | Encargado |
+| PUT | `/encargado/equipos/{equipo}` | `equipos.update` | Encargado |
+| DELETE | `/encargado/equipos/{equipo}` | `equipos.destroy` | Encargado |
+| POST | `/encargado/equipos/{equipo}/prestar` | `equipos.prestar` | Encargado |
+| POST | `/encargado/equipos/{equipo}/devolver` | `equipos.devolver` | Encargado |
+| GET | `/estudiante/dashboard` | `estudiante.dashboard` | Estudiante |
+| GET | `/profile` | `profile.edit` | Autenticado |
+
+Las rutas de autenticación de Breeze (login, logout, recuperación de contraseña) viven en `routes/auth.php`.
+El registro público (`/register`) está comentado.
+
+### Vistas
+
+- `resources/views/encargado/dashboard.blade.php` → panel del Encargado (inventario + registrar + prestar/devolver).
+- `resources/views/encargado/equipos/edit.blade.php` → formulario de edición de equipos.
+- `resources/views/estudiante/dashboard.blade.php` → panel del Estudiante (solo equipos disponibles).
+- `resources/views/errors/base-datos.blade.php` → vista amigable cuando falla la base de datos.
 
 ---
 
-## En desarrollo
+## Manejo de errores de base de datos
 
-- CRUD de equipos: `EquipoController` está creado como esqueleto, pero sus
-  métodos y rutas aún no están implementados.
-- Lógica de préstamos y devoluciones de equipos.
+Si MySQL/MariaDB no está disponible, la aplicación no muestra el error técnico. En su lugar:
+
+- El controlador captura las `QueryException`, las registra con `report()` y devuelve un mensaje entendible.
+- Existe un respaldo global en `bootstrap/app.php` (`withExceptions`) que muestra
+  `resources/views/errors/base-datos.blade.php`, una vista simple e independiente de la sesión
+  (importante porque la sesión también usa la base de datos).
+
+---
+
+## Pruebas
+
+```bash
+php artisan test
+```
+
+Cubren autenticación, redirección por rol, registro desactivado y el flujo general.
