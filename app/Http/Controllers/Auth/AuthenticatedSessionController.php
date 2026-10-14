@@ -28,7 +28,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Redirige al panel que corresponde según el rol del usuario.
+        $panel = $request->user()->rol === 'encargado'
+            ? 'encargado.dashboard'
+            : 'estudiante.dashboard';
+
+        return redirect()->intended(route($panel, absolute: false));
     }
 
     /**
