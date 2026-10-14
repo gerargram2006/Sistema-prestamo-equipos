@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('equipos', function (Blueprint $table) {
             $table->id();
+            $table->string('codigo')->unique();
+            $table->string('nombre');
+            $table->string('categoria');
+            $table->enum('estado', ['Disponible', 'Prestado'])->default('Disponible');
+            $table->foreignId('estudiante_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }
