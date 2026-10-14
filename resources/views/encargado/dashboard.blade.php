@@ -109,33 +109,6 @@
                                                         Eliminar
                                                     </button>
                                                 </form>
-
-                                                @if ($equipo->estado === 'Disponible')
-                                                    <!-- Prestar -->
-                                                    <form action="{{ route('equipos.prestar', $equipo) }}" method="POST"
-                                                          class="flex items-center gap-1">
-                                                        @csrf
-                                                        <select name="estudiante_id" class="border-gray-300 rounded text-xs" required>
-                                                            <option value="">Seleccionar estudiante</option>
-                                                            @foreach ($estudiantes as $estudiante)
-                                                                <option value="{{ $estudiante->id }}">{{ $estudiante->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <button type="submit"
-                                                                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs">
-                                                            Prestar
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <!-- Devolver -->
-                                                    <form action="{{ route('equipos.devolver', $equipo) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit"
-                                                                class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs">
-                                                            Devolver
-                                                        </button>
-                                                    </form>
-                                                @endif
                                             </div>
                                         </td>
                                     </tr>

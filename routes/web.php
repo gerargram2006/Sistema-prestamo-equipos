@@ -16,20 +16,20 @@ Route::get('/dashboard', function () {
         : redirect()->route('estudiante.dashboard');
 })->middleware('auth')->name('dashboard');
 
-// Rutas del Encargado: gestión completa de equipos.
+// Rutas del Encargado: gestión completa de equipos (ver, registrar, editar, eliminar).
 Route::middleware(['auth', 'rol:encargado'])->prefix('encargado')->group(function () {
     Route::get('/dashboard', [EquipoController::class, 'indexEncargado'])->name('encargado.dashboard');
     Route::post('/equipos', [EquipoController::class, 'store'])->name('equipos.store');
     Route::get('/equipos/{equipo}/edit', [EquipoController::class, 'edit'])->name('equipos.edit');
     Route::put('/equipos/{equipo}', [EquipoController::class, 'update'])->name('equipos.update');
     Route::delete('/equipos/{equipo}', [EquipoController::class, 'destroy'])->name('equipos.destroy');
-    Route::post('/equipos/{equipo}/prestar', [EquipoController::class, 'prestar'])->name('equipos.prestar');
-    Route::post('/equipos/{equipo}/devolver', [EquipoController::class, 'devolver'])->name('equipos.devolver');
 });
 
-// Rutas del Estudiante: solo consulta de equipos disponibles.
+// Rutas del Estudiante: consultar disponibles, solicitar y devolver.
 Route::middleware(['auth', 'rol:estudiante'])->prefix('estudiante')->group(function () {
     Route::get('/dashboard', [EquipoController::class, 'indexEstudiante'])->name('estudiante.dashboard');
+    Route::post('/equipos/{equipo}/prestar', [EquipoController::class, 'prestar'])->name('equipos.prestar');
+    Route::post('/equipos/{equipo}/devolver', [EquipoController::class, 'devolver'])->name('equipos.devolver');
 });
 
 // Perfil (Breeze).

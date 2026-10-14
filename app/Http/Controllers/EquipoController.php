@@ -3,32 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Equipo;
-use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class EquipoController extends Controller
 {
+    /* ===================== ENCARGADO (CRUD) ===================== */
+
     /**
-     * Panel del Encargado: lista todos los equipos y los estudiantes
-     * disponibles para el selector de préstamo.
+     * Panel del Encargado: lista todos los equipos.
      */
     public function indexEncargado()
     {
         try {
             $equipos = Equipo::with('estudiante')->get();
-            $estudiantes = User::where('rol', 'estudiante')->orderBy('name')->get();
 
-            return view('encargado.dashboard', compact('equipos', 'estudiantes'));
+            return view('encargado.dashboard', compact('equipos'));
         } catch (QueryException $e) {
             report($e);
 
-            // En peticiones GET no usamos back() para evitar bucles de redirección.
-            return view('encargado.dashboard', [
-                'equipos' => collect(),
-                'estudiantes' => collect(),
-            ])->with('error', 'No se pudo cargar la información. Intenta nuevamente en unos minutos.');
+            return view('encargado.dashboard', ['equipos' => collect()])
+                ->with('error', 'No se pudo cargar la información. Intenta nuevamente en unos minutos.');
         }
     }
 
@@ -110,26 +106,46 @@ class EquipoController extends Controller
         }
     }
 
-    /**
-     * Prestar un equipo a un estudiante.
-     */
-    public function prestar(Request $request, Equipo $equipo)
-    {
-        $datos = $request->validate([
-            'estudiante_id' => ['required', 'integer', Rule::exists('users', 'id')->where('rol', 'estudiante')],
-        ], $this->mensajes());
+    /* ===================== ESTUDIANTE ===================== */
 
+    /**
+     * Panel del Estudiante: consulta los equipos disponibles y los que tiene prestados.
+     */
+    public function indexEstudiante()
+    {
+        try {
+            $equipos = Equipo::where('estado', 'Disponible')->orderBy('codigo')->get();
+
+            // Equipos que el estudiante autenticado tiene prestados (para poder devolverlos).
+            $misEquipos = Equipo::where('estudiante_id', auth()->id())->orderBy('codigo')->get();
+
+            return view('estudiante.dashboard', compact('equipos', 'misEquipos'));
+        } catch (QueryException $e) {
+            report($e);
+
+            return view('estudiante.dashboard', [
+                'equipos' => collect(),
+                'misEquipos' => collect(),
+            ])->with('error', 'No se pudo cargar la información. Intenta nuevamente en unos minutos.');
+        }
+    }
+
+    /**
+     * Préstamo: el estudiante autenticado solicita un equipo disponible.
+     */
+    public function prestar(Equipo $equipo)
+    {
         if ($equipo->estado !== 'Disponible') {
-            return back()->with('error', 'El equipo no está disponible para préstamo.');
+            return back()->with('error', 'El equipo ya no está disponible.');
         }
 
         try {
             $equipo->update([
                 'estado' => 'Prestado',
-                'estudiante_id' => $datos['estudiante_id'],
+                'estudiante_id' => auth()->id(),
             ]);
 
-            return back()->with('success', 'Equipo prestado correctamente.');
+            return back()->with('success', 'Equipo solicitado correctamente.');
         } catch (QueryException $e) {
             report($e);
 
@@ -138,12 +154,12 @@ class EquipoController extends Controller
     }
 
     /**
-     * Devolver un equipo prestado (vuelve a Disponible).
+     * Devolución: solo el estudiante que tiene prestado el equipo puede devolverlo.
      */
     public function devolver(Equipo $equipo)
     {
-        if ($equipo->estado !== 'Prestado') {
-            return back()->with('error', 'El equipo no está prestado.');
+        if ($equipo->estado !== 'Prestado' || (int) $equipo->estudiante_id !== (int) auth()->id()) {
+            return back()->with('error', 'No puedes devolver este equipo.');
         }
 
         try {
@@ -161,23 +177,6 @@ class EquipoController extends Controller
     }
 
     /**
-     * Panel del Estudiante: solo lectura, únicamente equipos Disponibles.
-     */
-    public function indexEstudiante()
-    {
-        try {
-            $equipos = Equipo::where('estado', 'Disponible')->orderBy('codigo')->get();
-
-            return view('estudiante.dashboard', compact('equipos'));
-        } catch (QueryException $e) {
-            report($e);
-
-            return view('estudiante.dashboard', ['equipos' => collect()])
-                ->with('error', 'No se pudo cargar la información. Intenta nuevamente en unos minutos.');
-        }
-    }
-
-    /**
      * Mensajes de validación en español para reutilizar en los formularios.
      */
     private function mensajes(): array
@@ -189,8 +188,6 @@ class EquipoController extends Controller
             'categoria.required' => 'La categoría es obligatoria.',
             'estado.required' => 'El estado es obligatorio.',
             'estado.in' => 'El estado seleccionado no es válido.',
-            'estudiante_id.required' => 'Debe seleccionar un estudiante.',
-            'estudiante_id.exists' => 'El estudiante seleccionado no es válido.',
         ];
     }
 }

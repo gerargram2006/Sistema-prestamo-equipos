@@ -26,10 +26,10 @@ El proyecto parte de una instalación de **Laravel Breeze** (autenticación por 
 - **Ingreso con correo y contraseña.** Solo usuarios registrados. Si las credenciales son incorrectas se muestra un mensaje claro en español.
 - **Ninguna página interna es accesible sin sesión.** Todo redirige al login. Opción de cerrar sesión.
 - **Dos roles con paneles distintos**, cada uno mostrando el nombre y el rol del usuario:
-  - **Encargado:** registra, lista, edita, elimina equipos y gestiona préstamos y devoluciones.
-  - **Estudiante:** solo consulta los equipos **disponibles** (modo lectura, sin acciones de modificación).
+  - **Encargado:** registra, lista, edita y elimina equipos (CRUD del inventario).
+  - **Estudiante:** consulta los equipos **disponibles**, los **solicita** (préstamo) y **devuelve** los que tiene a su cargo.
 - **Gestión de equipos** con código, nombre, categoría y estado (`Disponible` / `Prestado`).
-- **Préstamos y devoluciones:** prestar un equipo a un estudiante lo deja en `Prestado`; devolverlo lo vuelve a `Disponible`. No se permite eliminar un equipo que está prestado.
+- **Préstamos y devoluciones:** el estudiante solicita un equipo disponible y este queda a su nombre en estado `Prestado`; solo él puede devolverlo, lo que lo vuelve a `Disponible`. No se permite eliminar un equipo que está prestado.
 - **Formularios seguros:** validación, protección CSRF y consultas mediante Eloquent (sin SQL concatenado).
 - **Manejo de errores de base de datos:** si la BD falla, el usuario ve una vista amigable y nunca un error técnico.
 
@@ -44,7 +44,8 @@ El proyecto parte de una instalación de **Laravel Breeze** (autenticación por 
 | Registrar equipo | Sí | No |
 | Editar equipo | Sí | No |
 | Eliminar equipo (si no está prestado) | Sí | No |
-| Prestar / devolver equipo | Sí | No |
+| Solicitar (prestar) un equipo disponible | No | Sí |
+| Devolver su propio equipo prestado | No | Sí |
 
 La protección se aplica con el middleware `CheckRole` (alias `rol`), registrado en `bootstrap/app.php`. Si un usuario intenta entrar a un panel que no le corresponde, se le redirige automáticamente a su propio panel.
 
@@ -225,9 +226,9 @@ php artisan db:seed --class=UserSeeder
 | GET | `/encargado/equipos/{equipo}/edit` | `equipos.edit` | Encargado |
 | PUT | `/encargado/equipos/{equipo}` | `equipos.update` | Encargado |
 | DELETE | `/encargado/equipos/{equipo}` | `equipos.destroy` | Encargado |
-| POST | `/encargado/equipos/{equipo}/prestar` | `equipos.prestar` | Encargado |
-| POST | `/encargado/equipos/{equipo}/devolver` | `equipos.devolver` | Encargado |
 | GET | `/estudiante/dashboard` | `estudiante.dashboard` | Estudiante |
+| POST | `/estudiante/equipos/{equipo}/prestar` | `equipos.prestar` | Estudiante |
+| POST | `/estudiante/equipos/{equipo}/devolver` | `equipos.devolver` | Estudiante |
 | GET | `/profile` | `profile.edit` | Autenticado |
 
 Las rutas de autenticación de Breeze (login, logout, recuperación de contraseña) viven en `routes/auth.php`.
@@ -235,9 +236,9 @@ El registro público (`/register`) está comentado.
 
 ### Vistas
 
-- `resources/views/encargado/dashboard.blade.php` → panel del Encargado (inventario + registrar + prestar/devolver).
+- `resources/views/encargado/dashboard.blade.php` → panel del Encargado (inventario + registrar + editar/eliminar).
 - `resources/views/encargado/equipos/edit.blade.php` → formulario de edición de equipos.
-- `resources/views/estudiante/dashboard.blade.php` → panel del Estudiante (solo equipos disponibles).
+- `resources/views/estudiante/dashboard.blade.php` → panel del Estudiante (disponibles para solicitar + sus préstamos para devolver).
 - `resources/views/errors/base-datos.blade.php` → vista amigable cuando falla la base de datos.
 
 ---
