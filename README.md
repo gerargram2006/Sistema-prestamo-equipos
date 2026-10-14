@@ -18,12 +18,11 @@ Cuenta con **dos paneles independientes**: uno para el **Encargado**, que gestio
 
 > Completa la lista con los nombres y apellidos de todos los integrantes del grupo y su rol/participación.
 
-- **Integrante 1:** _Nombres y Apellidos_ — _(rol / aporte, opcional)_
-- **Integrante 2:** _Nombres y Apellidos_ — _(rol / aporte, opcional)_
-- **Integrante 3:** _Nombres y Apellidos_ — _(rol / aporte, opcional)_
-- **Integrante 4:** _Nombres y Apellidos_ — _(rol / aporte, opcional)_
-- **Integrante 5:** _Nombres y Apellidos_ — _(rol / aporte, opcional)_
-- **Integrante 6:** _Nombres y Apellidos_ — _(rol / aporte, opcional)_
+  - **Integrante 1:** _Gerar Rodrigo Camma Baldeon_ — _(base de datos, modelos y repositorio)_
+  - **Integrante 2:** _Gabriel Quispe Huaychay_ — _(CRUD de equipos)_
+  - **Integrante 3:** _Hugo Ernesto Florez Merma_ — _(roles y paneles)_
+  - **Integrante 4:** _Barry Valdivia Lovon_ — _(préstamos, vista del estudiante, errores de BD y documentación)_
+  - **Integrante 5:** _Samuel A. Llallacachi Salhua_ — _(autenticación y sesiones)_
 
 **Curso:** _Nombre del curso_ · **Docente:** _Nombre del docente_ · **Fecha:** _dd/mm/aaaa_
 
@@ -34,9 +33,9 @@ Cuenta con **dos paneles independientes**: uno para el **Encargado**, que gestio
 ### Requisitos previos
 
 - PHP **8.3** o superior
-- Composer
-- Node.js y npm
-- MySQL o MariaDB
+  - Composer
+  - Node.js y npm
+  - MySQL o MariaDB
 
 ### Pasos
 
@@ -118,25 +117,25 @@ Esta sección justifica técnicamente cómo el proyecto aplica los temas vistos 
 **Herencia.** Nuestras clases **heredan funcionalidad base de Laravel** en lugar de reescribirla:
 
 - `App\Models\User extends Illuminate\Foundation\Auth\User` (que a su vez extiende `Illuminate\Database\Eloquent\Model`).
-- `App\Models\Equipo extends Illuminate\Database\Eloquent\Model`.
-- `App\Http\Controllers\EquipoController extends Controller` (controlador base de Laravel).
-- Los seeders extienden `Illuminate\Database\Seeder` y las migraciones extienden `Illuminate\Database\Migrations\Migration`.
+  - `App\Models\Equipo extends Illuminate\Database\Eloquent\Model`.
+  - `App\Http\Controllers\EquipoController extends Controller` (controlador base de Laravel).
+  - Los seeders extienden `Illuminate\Database\Seeder` y las migraciones extienden `Illuminate\Database\Migrations\Migration`.
 
 Gracias a la herencia obtenemos gratis métodos como `create()`, `update()`, `delete()`, `validate()` o `redirect()`, sin volver a programarlos.
 
 **Encapsulamiento.** Ocultamos los detalles internos y exponemos solo lo necesario:
 
 - El modelo `Equipo` usa la propiedad protegida `$fillable` para definir qué campos se pueden asignar masivamente (protección contra *mass assignment*).
-- El modelo `User` usa los atributos `#[Fillable([...])]` y `#[Hidden([...])]` para ocultar `password` y `remember_token` al serializar.
-- `casts()` encapsula la conversión de tipos (`password => hashed`, `email_verified_at => datetime`).
-- Las relaciones viven dentro del modelo: `Equipo::estudiante()` y `User::equiposPrestados()`.
-- En el controlador, `mensajes()` es un método `private` (solo se usa internamente).
+  - El modelo `User` usa los atributos `#[Fillable([...])]` y `#[Hidden([...])]` para ocultar `password` y `remember_token` al serializar.
+  - `casts()` encapsula la conversión de tipos (`password => hashed`, `email_verified_at => datetime`).
+  - Las relaciones viven dentro del modelo: `Equipo::estudiante()` y `User::equiposPrestados()`.
+  - En el controlador, `mensajes()` es un método `private` (solo se usa internamente).
 
 **Polimorfismo.** Un mismo método o interfaz se comporta distinto según la clase:
 
 - Los tres seeders sobrescriben el método `run()` de `Seeder` con comportamientos diferentes (uno llama a otros seeders, otro crea usuarios y otro crea equipos): **mismo método, distinto comportamiento**.
-- `Equipo` y `User` heredan de `Model`, por lo que comparten **la misma interfaz** (`->update()`, `->delete()`, `->save()`) aunque representen tablas distintas.
-- El middleware implementa el contrato `handle()` de Laravel, que el framework llama de forma uniforme para todos los middlewares.
+  - `Equipo` y `User` heredan de `Model`, por lo que comparten **la misma interfaz** (`->update()`, `->delete()`, `->save()`) aunque representen tablas distintas.
+  - El middleware implementa el contrato `handle()` de Laravel, que el framework llama de forma uniforme para todos los middlewares.
 
 ### Semana 6 — Conexión con MySQL y CRUD (Eloquent + Migraciones)
 
@@ -154,8 +153,8 @@ Gracias a la herencia obtenemos gratis métodos como `create()`, `update()`, `de
 **Seguridad contra inyección SQL.** El ORM genera **consultas preparadas con parámetros vinculados** (*bindings*), por lo que **no concatenamos SQL** en ningún punto del proyecto. A esto se suman:
 
 - Las **migraciones** definen el esquema como código (sin escribir SQL suelto).
-- El **Route Model Binding** (`Equipo $equipo`) resuelve el registro de forma segura.
-- La **validación** (`$request->validate(...)` y `Rule::unique('equipos','codigo')`) filtra los datos antes de llegar a la base de datos.
+  - El **Route Model Binding** (`Equipo $equipo`) resuelve el registro de forma segura.
+  - La **validación** (`$request->validate(...)` y `Rule::unique('equipos','codigo')`) filtra los datos antes de llegar a la base de datos.
 
 ### Semana 7 — Sesiones y Seguridad
 
@@ -164,7 +163,7 @@ Gracias a la herencia obtenemos gratis métodos como `create()`, `update()`, `de
 **Middlewares.** Protegemos las rutas privadas con dos filtros:
 
 1. **`auth`:** exige que el usuario tenga sesión iniciada. Si no, redirige al login.
-2. **`rol` (personalizado, `App\Http\Middleware\CheckRole`):** verifica el rol del usuario y, si no corresponde, lo **redirige a su propio panel**.
+   2. **`rol` (personalizado, `App\Http\Middleware\CheckRole`):** verifica el rol del usuario y, si no corresponde, lo **redirige a su propio panel**.
 
 Los grupos de rutas en `routes/web.php` aplican ambos middlewares:
 
@@ -176,17 +175,17 @@ Route::middleware(['auth', 'rol:estudiante'])->prefix('estudiante')->group(...);
 Con esto, **un estudiante no puede acceder por URL al dashboard del encargado ni a sus acciones**, y viceversa: aunque escriba la dirección a mano, el middleware lo devuelve a su panel. Además:
 
 - **CSRF:** todos los formularios incluyen `@csrf`, protegiendo contra peticiones falsificadas.
-- **Contraseñas cifradas** con el cast `password => hashed` (bcrypt).
-- **Escape de salida** con `{{ }}` de Blade (protección XSS).
-- **Registro público desactivado** (los usuarios se crean por seeder).
+  - **Contraseñas cifradas** con el cast `password => hashed` (bcrypt).
+  - **Escape de salida** con `{{ }}` de Blade (protección XSS).
+  - **Registro público desactivado** (los usuarios se crean por seeder).
 
 ### Semana 8 — Introducción a Frameworks con Laravel
 
 **Arquitectura MVC.** El proyecto sigue el patrón **Modelo–Vista–Controlador**:
 
 - **Modelo (M):** `app/Models/User.php` y `app/Models/Equipo.php` (datos y relaciones).
-- **Vista (V):** `resources/views/**` con el motor **Blade** (solo presentación).
-- **Controlador (C):** `app/Http/Controllers/EquipoController.php` (lógica de negocio).
+  - **Vista (V):** `resources/views/**` con el motor **Blade** (solo presentación).
+  - **Controlador (C):** `app/Http/Controllers/EquipoController.php` (lógica de negocio).
 
 **Enrutamiento.** Todas las solicitudes web se registran en `routes/web.php`, usando rutas con nombre, agrupadas por rol y con `Route::resource('equipos', EquipoController::class)` para el CRUD. Las rutas de autenticación están en `routes/auth.php`.
 
@@ -222,12 +221,12 @@ bootstrap/app.php                          # Middleware y manejo de excepciones
 ### Modelos
 
 - **`User`:** rellenable `name`, `email`, `password`, `rol`; ocultos `password`, `remember_token`; relación `equiposPrestados()` → `hasMany(Equipo)`.
-- **`Equipo`:** rellenable `codigo`, `nombre`, `categoria`, `estado`, `estudiante_id`; relación `estudiante()` → `belongsTo(User)`.
+  - **`Equipo`:** rellenable `codigo`, `nombre`, `categoria`, `estado`, `estudiante_id`; relación `estudiante()` → `belongsTo(User)`.
 
 ### Base de datos
 
 - **`users`:** columna `rol` (`enum('encargado','estudiante')`, por defecto `estudiante`).
-- **`equipos`:** `codigo` (único), `nombre`, `categoria`, `estado` (`enum('Disponible','Prestado')`) y `estudiante_id` (FK nullable, `nullOnDelete`).
+  - **`equipos`:** `codigo` (único), `nombre`, `categoria`, `estado` (`enum('Disponible','Prestado')`) y `estudiante_id` (FK nullable, `nullOnDelete`).
 
 ---
 
