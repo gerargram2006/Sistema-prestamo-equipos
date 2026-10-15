@@ -26,6 +26,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Equipo::class, 'estudiante_id');
     }
+
     protected function casts(): array
     {
         return [
