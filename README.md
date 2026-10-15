@@ -19,11 +19,11 @@ El acceso a cada panel está protegido por autenticación por sesión y por el r
 
 ## 2. Integrantes del Equipo
 
-- **Gerar Rodrigo Camma Baldeon**
-- **Quispe Huaychay Gabriel**
-- **Hugo Ernesto Florez Merma**
-- **Barry Valdivia Lovon**
-- **Llallacachi Salhua Samuel A.**
+- **Gerar Rodrigo Camma Baldeon** — Base de datos, modelos y repositorio.
+- **Quispe Huaychay Gabriel** — CRUD de equipos.
+- **Hugo Ernesto Florez Merma** — Roles y paneles.
+- **Barry Valdivia Lovon** — Préstamos, vista del estudiante, manejo de errores de BD y documentación.
+- **Llallacachi Salhua Samuel A.** — Autenticación y sesiones.
 
 ---
 
