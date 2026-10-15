@@ -46,7 +46,7 @@
                         <h3 class="text-lg font-semibold">Inventario de equipos</h3>
                         <a href="{{ route('equipos.create') }}"
                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm">
-                            Nuevo equipo
+                            Crear equipo
                         </a>
                     </div>
 
@@ -100,7 +100,11 @@
                                 @empty
                                     <tr>
                                         <td colspan="6" class="border px-3 py-2 text-center text-gray-500">
-                                            No hay equipos registrados.
+                                            <p class="mb-3">No hay equipos registrados.</p>
+                                            <a href="{{ route('equipos.create') }}"
+                                               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded text-sm inline-block">
+                                                Crear equipo
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforelse
