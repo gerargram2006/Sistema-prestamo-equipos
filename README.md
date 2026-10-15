@@ -1,41 +1,40 @@
-# Sistema de préstamo de equipos
+# Sistema de Préstamo de Equipos de Laboratorio
 
-Aplicación web desarrollada con **Laravel** para el control y préstamo de equipos de laboratorio (laptops, proyectores, kits de electrónica, multímetros, etc.).
-
-El sistema tiene **autenticación por sesión** y **paneles separados según el rol**: el **Encargado** administra el inventario (registrar, ver, editar y eliminar equipos) y el **Estudiante** consulta los equipos disponibles, los solicita y los devuelve. El proyecto parte de **Laravel Breeze** y sobre esa base se añadieron los roles, la tabla de equipos, los seeders, las vistas con Blade y todo el módulo de préstamos.
+Sistema web desarrollado en **Laravel 13** para controlar el préstamo de equipos (laptops, proyectores, kits Arduino, multímetros) con **paneles de acceso separados** para los roles de **Encargado** y **Estudiante**.
 
 ---
 
-## 1. Descripción del Proyecto
+## 1. Descripción
 
-El **Sistema de préstamo de equipos** es una aplicación web pensada para el control y préstamo del material de un laboratorio, evitando pérdidas y desorden en la entrega y devolución de equipos.
+El **Sistema de Préstamo de Equipos de Laboratorio** es una aplicación web cuya finalidad es llevar un control ordenado de la entrega y devolución del material de laboratorio, evitando pérdidas y registros manuales.
 
-Cuenta con **dos paneles independientes**: uno para el **Encargado**, que gestiona el inventario completo (CRUD), y otro para el **Estudiante**, que solicita equipos disponibles y devuelve los que tiene a su cargo. El acceso a cada panel está protegido por autenticación y por el rol del usuario.
+Cuenta con dos paneles independientes según el rol:
 
----
+- **Encargado:** administra el inventario completo (registrar, listar, editar y eliminar equipos).
+- **Estudiante:** consulta los equipos disponibles, los **solicita** (préstamo) y **devuelve** los que tiene a su cargo.
 
-## 2. Nombres de los Integrantes
-
-> Completa la lista con los nombres y apellidos de todos los integrantes del grupo y su rol/participación.
-
-  - **Integrante 1:** _Gerar Rodrigo Camma Baldeon_ — _(base de datos, modelos y repositorio)_
-  - **Integrante 2:** _Gabriel Quispe Huaychay_ — _(CRUD de equipos)_
-  - **Integrante 3:** _Hugo Ernesto Florez Merma_ — _(roles y paneles)_
-  - **Integrante 4:** _Barry Valdivia Lovon_ — _(préstamos, vista del estudiante, errores de BD y documentación)_
-  - **Integrante 5:** _Samuel A. Llallacachi Salhua_ — _(autenticación y sesiones)_
-
-**Curso:** _Nombre del curso_ · **Docente:** _Nombre del docente_ · **Fecha:** _dd/mm/aaaa_
+El acceso a cada panel está protegido por autenticación por sesión y por el rol del usuario.
 
 ---
 
-## 3. Guía de Instalación Rápida
+## 2. Integrantes del Equipo
+
+- **Gerar Rodrigo Camma Baldeon**
+- **Quispe Huaychay Gabriel**
+- **Hugo Ernesto Florez Merma**
+- **Barry Valdivia Lovon**
+- **Llallacachi Salhua Samuel A.**
+
+---
+
+## 3. Guía de Instalación
 
 ### Requisitos previos
 
 - PHP **8.3** o superior
-  - Composer
-  - Node.js y npm
-  - MySQL o MariaDB
+- Composer
+- Node.js y npm
+- MySQL o MariaDB
 
 ### Pasos
 
@@ -47,186 +46,187 @@ cd Sistema-prestamo-equipos
 # 2. Instalar las dependencias de PHP
 composer install
 
-# 3. Instalar las dependencias del frontend y compilar los estilos
+# 3. Copiar el archivo de entorno y generar la clave
+cp .env.example .env
+php artisan key:generate
+```
+
+```bash
+# 4. Crear una base de datos vacía llamada "prestamo_equipos" (desde MySQL/MariaDB)
+mysql -u root -p -e "CREATE DATABASE prestamo_equipos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+```
+
+> Recuerda configurar las credenciales de la base de datos en el archivo `.env`
+> (`DB_DATABASE=prestamo_equipos`, `DB_USERNAME`, `DB_PASSWORD`).
+
+```bash
+# 5. Ejecutar migraciones y seeders
+php artisan migrate:fresh --seed
+
+# 6. Compilar los assets del frontend
 npm install && npm run build
 
-# 4. Copiar el archivo de entorno
-cp .env.example .env
-
-# 5. Generar la clave de la aplicación
-php artisan key:generate
-
-# 6. Levantar el servidor local
+# 7. Levantar el servidor local
 php artisan serve
 ```
 
 La aplicación quedará disponible en **http://localhost:8000**.
 
-### Configurar la base de datos (`.env`)
-
-Antes de migrar, edita el archivo `.env` con los datos de tu MySQL/MariaDB:
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=prestamo_equipos
-DB_USERNAME=root
-DB_PASSWORD=tu_password
-```
-
-> **Nota para MariaDB en Ubuntu/WSL:** si al migrar aparece
-> `SQLSTATE[HY000] [1698] Access denied for user 'root'@'localhost'`, ejecuta:
->
-> ```bash
-> sudo mariadb -e "ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('tu_password'); FLUSH PRIVILEGES;"
-> ```
-
 ---
 
-## 4. Base de Datos y Semillas (Seeders)
+## 4. Usuarios de Prueba (Seeders)
 
-Ejecuta el siguiente comando para crear todas las tablas y cargar los datos de prueba (usuarios y equipos):
+Estas cuentas son creadas automáticamente por el `UserSeeder` al ejecutar `php artisan migrate:fresh --seed`
+(el registro público está desactivado, por lo que los usuarios se cargan mediante seeders):
 
-```bash
-php artisan migrate:fresh --seed
-```
+| Rol | Correo | Contraseña |
+| --- | --- | --- |
+| **Encargado** | `encargado@tecsup.edu.pe` | `encargado123` |
+| **Estudiante 1** | `estudiante1@tecsup.edu.pe` | `estudiante123` |
+| **Estudiante 2** | `estudiante2@tecsup.edu.pe` | `estudiante123` |
 
-### Credenciales de Prueba
-
-Estas cuentas las genera el `UserSeeder` (el **registro público está desactivado**, por lo que los usuarios se cargan por seeders):
-
-| Rol | Correo | Contraseña | ¿Qué puede hacer? |
-| --- | --- | --- | --- |
-| **Encargado** | `encargado@tecsup.edu.pe` | `encargado123` | Registrar, ver, editar y eliminar equipos (CRUD completo). |
-| **Estudiante** | `estudiante1@tecsup.edu.pe` | `estudiante123` | Ver disponibles, solicitar equipos y devolver los suyos. |
-| **Estudiante** | `estudiante2@tecsup.edu.pe` | `estudiante123` | Igual que el anterior (sirve para probar que no se devuelven equipos ajenos). |
-
-> El `EquipoSeeder` carga además **8 equipos de ejemplo**, todos en estado `Disponible`.
+> El `EquipoSeeder` carga además **8 equipos de ejemplo** (laptops, proyectores, kits Arduino y multímetros), todos en estado `Disponible`.
 
 ---
 
 ## 5. Aplicación de los Temas del Curso (Semanas 5 a 8)
 
-Esta sección justifica técnicamente cómo el proyecto aplica los temas vistos en clase.
+Esta sección explica cómo el proyecto aplica, en la práctica, los temas vistos en clase.
 
 ### Semana 5 — Programación Orientada a Objetos (POO)
 
-**Clases.** Todo el sistema está construido con clases: los modelos (`User`, `Equipo`), el controlador (`EquipoController`), el middleware (`CheckRole`) y los seeders (`DatabaseSeeder`, `UserSeeder`, `EquipoSeeder`). Cada clase agrupa sus datos (atributos) y su comportamiento (métodos).
+**Herencia.** Todas las clases del sistema reutilizan comportamiento de una clase base de Laravel en lugar de programarlo desde cero:
 
-**Herencia.** Nuestras clases **heredan funcionalidad base de Laravel** en lugar de reescribirla:
+- `App\Models\Equipo extends Model` (Eloquent): hereda `create()`, `update()`, `delete()`, `find()`, etc.
+- `App\Models\User extends Illuminate\Foundation\Auth\User` (que a su vez hereda de `Model`).
+- `App\Http\Requests\Auth\LoginRequest extends FormRequest`: hereda la validación y la autorización de peticiones.
+- `App\Http\Controllers\EquipoController extends Controller` y los seeders extienden `Illuminate\Database\Seeder`.
 
-- `App\Models\User extends Illuminate\Foundation\Auth\User` (que a su vez extiende `Illuminate\Database\Eloquent\Model`).
-  - `App\Models\Equipo extends Illuminate\Database\Eloquent\Model`.
-  - `App\Http\Controllers\EquipoController extends Controller` (controlador base de Laravel).
-  - Los seeders extienden `Illuminate\Database\Seeder` y las migraciones extienden `Illuminate\Database\Migrations\Migration`.
+**Encapsulamiento.** Los datos internos se protegen y solo se exponen los campos necesarios:
 
-Gracias a la herencia obtenemos gratis métodos como `create()`, `update()`, `delete()`, `validate()` o `redirect()`, sin volver a programarlos.
+- Los modelos usan `protected $fillable` (por ejemplo, en `Equipo`: `codigo`, `nombre`, `categoria`, `estado`, `estudiante_id`) para definir qué campos pueden asignarse de forma masiva y evitar el *mass assignment*.
+- El modelo `User` oculta atributos sensibles con `#[Hidden(['password', 'remember_token'])]` y define sus campos con `#[Fillable([...])]`.
+- Las relaciones se encapsulan en métodos del modelo (`Equipo::estudiante()`, `User::equiposPrestados()`).
+- En el controlador, `mensajes()` es un método `private`: solo se usa internamente.
 
-**Encapsulamiento.** Ocultamos los detalles internos y exponemos solo lo necesario:
+**Polimorfismo.** Un mismo método o interfaz se comporta distinto según la clase que lo implementa:
 
-- El modelo `Equipo` usa la propiedad protegida `$fillable` para definir qué campos se pueden asignar masivamente (protección contra *mass assignment*).
-  - El modelo `User` usa los atributos `#[Fillable([...])]` y `#[Hidden([...])]` para ocultar `password` y `remember_token` al serializar.
-  - `casts()` encapsula la conversión de tipos (`password => hashed`, `email_verified_at => datetime`).
-  - Las relaciones viven dentro del modelo: `Equipo::estudiante()` y `User::equiposPrestados()`.
-  - En el controlador, `mensajes()` es un método `private` (solo se usa internamente).
+- Los seeders sobrescriben el método `run()` de `Seeder` con comportamientos diferentes (crear usuarios, crear equipos, o llamar a otros seeders): **mismo método, distinto comportamiento**.
+- `Equipo` y `User` heredan de `Model` y comparten la misma interfaz (`->save()`, `->update()`, `->delete()`) aunque representen tablas distintas.
+- `LoginRequest` sobrescribe `rules()` y `authorize()` de `FormRequest`, personalizando su comportamiento.
+- El middleware `CheckRole` implementa el contrato `handle()`, que Laravel invoca de forma uniforme para todos los middlewares.
 
-**Polimorfismo.** Un mismo método o interfaz se comporta distinto según la clase:
+### Semana 6 — PHP y MySQL con PDO
 
-- Los tres seeders sobrescriben el método `run()` de `Seeder` con comportamientos diferentes (uno llama a otros seeders, otro crea usuarios y otro crea equipos): **mismo método, distinto comportamiento**.
-  - `Equipo` y `User` heredan de `Model`, por lo que comparten **la misma interfaz** (`->update()`, `->delete()`, `->save()`) aunque representen tablas distintas.
-  - El middleware implementa el contrato `handle()` de Laravel, que el framework llama de forma uniforme para todos los middlewares.
+**Conexión mediante PDO.** Laravel **utiliza PDO internamente** para conectarse a MySQL/MariaDB. La conexión se configura en el archivo `.env` (`DB_CONNECTION=mysql`, `DB_HOST`, `DB_DATABASE=prestamo_equipos`, `DB_USERNAME`, `DB_PASSWORD`). Gracias a esta capa, el framework abstrae el acceso a la base de datos.
 
-### Semana 6 — Conexión con MySQL y CRUD (Eloquent + Migraciones)
+**ORM Eloquent y sentencias preparadas.** En lugar de escribir SQL concatenado, usamos el ORM **Eloquent**, que genera **sentencias preparadas** con parámetros vinculados (*bindings*). Esto **evita la inyección SQL**, porque los datos nunca se concatenan directamente en la consulta. El CRUD de la tabla `equipos` se realiza íntegramente en `EquipoController`:
 
-**Conexión y esquema.** La conexión a MySQL se define en `.env` y el esquema se versiona con **migraciones** (`database/migrations/`), que describen las tablas `users` (con la columna `rol`) y `equipos` (con `codigo` único, `nombre`, `categoria`, `estado` y la clave foránea `estudiante_id` → `users`).
+| Operación | Método usado en `EquipoController` |
+| --- | --- |
+| **Crear** | `Equipo::create($datos)` |
+| **Leer** | `Equipo::with('estudiante')->get()` / `Equipo::where('estado', 'Disponible')->get()` |
+| **Actualizar** | `$equipo->update($datos)` |
+| **Eliminar** | `$equipo->delete()` |
 
-**CRUD completo sobre la tabla `equipos`** usando **Eloquent** (el ORM de Laravel) en lugar de PDO manual:
+Además, las **migraciones** (`create_users_table`, `create_equipos_table`) definen el esquema como código y el **Route Model Binding** (`Equipo $equipo`) resuelve los registros de forma segura.
 
-| Operación | Método / código usado | Acción en el sistema |
-| --- | --- | --- |
-| **C**rear | `Equipo::create($datos)` | Registrar un equipo nuevo |
-| **L**eer | `Equipo::with('estudiante')->get()` | Listar el inventario |
-| **A**ctualizar | `$equipo->update($datos)` | Editar un equipo |
-| **E**liminar | `$equipo->delete()` | Eliminar un equipo (si no está prestado) |
-
-**Seguridad contra inyección SQL.** El ORM genera **consultas preparadas con parámetros vinculados** (*bindings*), por lo que **no concatenamos SQL** en ningún punto del proyecto. A esto se suman:
-
-- Las **migraciones** definen el esquema como código (sin escribir SQL suelto).
-  - El **Route Model Binding** (`Equipo $equipo`) resuelve el registro de forma segura.
-  - La **validación** (`$request->validate(...)` y `Rule::unique('equipos','codigo')`) filtra los datos antes de llegar a la base de datos.
+**Manejo de errores de base de datos.** El controlador captura las excepciones de tipo `QueryException` con `try/catch`, las registra con `report()` y muestra un mensaje amigable en lugar del error técnico. A este respaldo se suma un manejador **global** en `bootstrap/app.php` que, ante una falla de conexión, renderiza la vista `resources/views/errors/base-datos.blade.php`.
 
 ### Semana 7 — Sesiones y Seguridad
 
-**Sesiones.** El sistema mantiene la sesión del usuario con el driver de sesiones de Laravel y la autenticación de **Breeze** (`AuthenticatedSessionController` + `Auth::attempt()`). Todo se apoya en `auth()->user()` y `auth()->id()`; al cerrar sesión se invalida la sesión.
+**Sesiones con Laravel Breeze.** La autenticación se apoya en **Laravel Breeze**, que gestiona la sesión del usuario **ligada a la base de datos** (`SESSION_DRIVER=database` y la tabla `sessions` creada por la migración de usuarios). Así, cada sesión iniciada queda registrada en la base de datos.
 
-**Middlewares.** Protegemos las rutas privadas con dos filtros:
+**Prevención de fijación de sesión.** Tras un inicio de sesión correcto se ejecuta `$request->session()->regenerate()` (en `AuthenticatedSessionController::store()`), lo que **regenera el ID de sesión** y evita ataques de *session fixation*. Al cerrar sesión se ejecutan `session()->invalidate()` y `session()->regenerateToken()`.
 
-1. **`auth`:** exige que el usuario tenga sesión iniciada. Si no, redirige al login.
-   2. **`rol` (personalizado, `App\Http\Middleware\CheckRole`):** verifica el rol del usuario y, si no corresponde, lo **redirige a su propio panel**.
+**Middlewares de protección.** Las rutas internas se protegen con dos middlewares:
 
-Los grupos de rutas en `routes/web.php` aplican ambos middlewares:
+1. **`auth`:** exige que el usuario tenga una sesión iniciada; si no, redirige al login.
+2. **`CheckRole` (middleware personalizado, alias `rol`):** verifica el rol del usuario y, si no corresponde, lo **redirige a su propio panel**.
 
 ```php
 Route::middleware(['auth', 'rol:encargado'])->prefix('encargado')->group(...);
 Route::middleware(['auth', 'rol:estudiante'])->prefix('estudiante')->group(...);
 ```
 
-Con esto, **un estudiante no puede acceder por URL al dashboard del encargado ni a sus acciones**, y viceversa: aunque escriba la dirección a mano, el middleware lo devuelve a su panel. Además:
-
-- **CSRF:** todos los formularios incluyen `@csrf`, protegiendo contra peticiones falsificadas.
-  - **Contraseñas cifradas** con el cast `password => hashed` (bcrypt).
-  - **Escape de salida** con `{{ }}` de Blade (protección XSS).
-  - **Registro público desactivado** (los usuarios se crean por seeder).
+De este modo, **un estudiante no puede acceder por URL al dashboard del encargado ni a sus acciones**, y viceversa. Se complementa con `@csrf` en los formularios (protección CSRF), el cifrado de contraseñas (`password => hashed`) y el escape de salida de Blade (`{{ }}`).
 
 ### Semana 8 — Introducción a Frameworks con Laravel
 
-**Arquitectura MVC.** El proyecto sigue el patrón **Modelo–Vista–Controlador**:
+**Arquitectura MVC.** El proyecto aplica el patrón **Modelo–Vista–Controlador**, separando responsabilidades:
 
-- **Modelo (M):** `app/Models/User.php` y `app/Models/Equipo.php` (datos y relaciones).
-  - **Vista (V):** `resources/views/**` con el motor **Blade** (solo presentación).
-  - **Controlador (C):** `app/Http/Controllers/EquipoController.php` (lógica de negocio).
+- **Modelos:** en `app/Models` (`User.php`, `Equipo.php`): representan las tablas y sus relaciones.
+- **Vistas:** en `resources/views` con el motor **Blade**: solo presentación (layout `x-app-layout`, directivas `@if`, `@forelse`, `@csrf`, `@method` e interpolación `{{ }}`).
+- **Controladores:** en `app/Http/Controllers` (`EquipoController.php`): contienen la lógica de negocio.
 
-**Enrutamiento.** Todas las solicitudes web se registran en `routes/web.php`, usando rutas con nombre, agrupadas por rol y con `Route::resource('equipos', EquipoController::class)` para el CRUD. Las rutas de autenticación están en `routes/auth.php`.
+**Enrutamiento.** Todas las solicitudes web se gestionan en `routes/web.php`, organizado por grupos según el rol, con rutas con nombre y con `Route::resource('equipos', EquipoController::class)` para el CRUD. Las rutas de autenticación viven en `routes/auth.php`.
 
-**Blade (plantillas).** Las vistas usan el layout `x-app-layout` y las directivas de Blade (`@if`, `@forelse`, `@csrf`, `@method`) junto con la interpolación `{{ }}`. Así **separa la lógica de presentación** del código PHP: el controlador prepara los datos y la vista solo los muestra.
-
-**Herramientas del framework.** Se aprovechan Artisan (migraciones, seeders, rutas, pruebas), los componentes de Blade, el sistema de configuración (`.env`) y el registro de middleware en `bootstrap/app.php`.
+**Herramientas del framework.** Se aprovechan Artisan (migraciones, seeders, rutas y pruebas), los componentes de Blade, la configuración por `.env` y el registro de middleware y excepciones en `bootstrap/app.php`.
 
 ---
 
-## 6. Estructura del Proyecto
+## 6. Estructura del Proyecto: ¿Para qué sirve cada archivo?
 
-```
-app/
-├── Http/
-│   ├── Controllers/EquipoController.php   # Paneles, CRUD, préstamos y devoluciones
-│   └── Middleware/CheckRole.php           # Protección por rol (alias 'rol')
-├── Models/
-│   ├── User.php                           # Usuarios (con rol) y sus préstamos
-│   └── Equipo.php                         # Equipos del laboratorio
-database/
-├── migrations/                            # Esquema de users y equipos
-└── seeders/                               # UserSeeder, EquipoSeeder
-resources/views/
-├── encargado/                             # Panel y vistas del Encargado
-├── estudiante/                            # Panel del Estudiante
-└── errors/                                # Vista amigable de error de BD
-routes/
-├── web.php                                # Rutas del sistema
-└── auth.php                               # Rutas de autenticación (Breeze)
-bootstrap/app.php                          # Middleware y manejo de excepciones
-```
-
-### Modelos
-
-- **`User`:** rellenable `name`, `email`, `password`, `rol`; ocultos `password`, `remember_token`; relación `equiposPrestados()` → `hasMany(Equipo)`.
-  - **`Equipo`:** rellenable `codigo`, `nombre`, `categoria`, `estado`, `estudiante_id`; relación `estudiante()` → `belongsTo(User)`.
+> Sección pensada para la **sustentación**: explica en palabras sencillas qué hace cada archivo creado para el proyecto.
 
 ### Base de datos
 
-- **`users`:** columna `rol` (`enum('encargado','estudiante')`, por defecto `estudiante`).
-  - **`equipos`:** `codigo` (único), `nombre`, `categoria`, `estado` (`enum('Disponible','Prestado')`) y `estudiante_id` (FK nullable, `nullOnDelete`).
+| Archivo | ¿Para qué sirve? |
+| --- | --- |
+| `database/migrations/0001_01_01_000000_create_users_table.php` | Crea las tablas `users` (con la columna `rol`), `password_reset_tokens` y `sessions`. |
+| `database/migrations/2026_10_10_235534_create_equipos_table.php` | Crea la tabla `equipos` (código único, nombre, categoría, estado y la clave foránea `estudiante_id`). |
+| `database/seeders/UserSeeder.php` | Inserta los usuarios de prueba (1 encargado y 2 estudiantes) con la contraseña cifrada. |
+| `database/seeders/EquipoSeeder.php` | Inserta los 8 equipos de ejemplo. |
+| `database/seeders/DatabaseSeeder.php` | Orquesta los seeders: llama a `UserSeeder` y `EquipoSeeder`. |
+
+### Modelos
+
+| Archivo | ¿Para qué sirve? |
+| --- | --- |
+| `app/Models/User.php` | Representa a los usuarios; guarda el `rol`, oculta la contraseña y define la relación "equipos prestados". |
+| `app/Models/Equipo.php` | Representa a los equipos; define los campos rellenables y la relación con el estudiante que lo tiene. |
+
+### Controladores, peticiones y middleware
+
+| Archivo | ¿Para qué sirve? |
+| --- | --- |
+| `app/Http/Controllers/EquipoController.php` | Es el corazón del sistema: muestra los paneles, hace el CRUD de equipos y gestiona prestar/devolver. |
+| `app/Http/Controllers/Auth/AuthenticatedSessionController.php` | Maneja el inicio y cierre de sesión; regenera la sesión y redirige al panel según el rol. |
+| `app/Http/Requests/Auth/LoginRequest.php` | Valida el correo y la contraseña del login y limita los intentos (protección contra fuerza bruta). |
+| `app/Http/Middleware/CheckRole.php` | Filtra el acceso por rol: si el usuario no tiene el rol correcto, lo devuelve a su propio panel. |
+
+### Rutas
+
+| Archivo | ¿Para qué sirve? |
+| --- | --- |
+| `routes/web.php` | Define las rutas del sistema agrupadas por rol (encargado y estudiante). |
+| `routes/auth.php` | Rutas de autenticación de Breeze; el registro público (`/register`) está comentado. |
+
+### Vistas (Blade)
+
+| Archivo | ¿Para qué sirve? |
+| --- | --- |
+| `resources/views/encargado/dashboard.blade.php` | Panel del Encargado: muestra el inventario y los botones para registrar, editar y eliminar. |
+| `resources/views/encargado/equipos/create.blade.php` | Formulario para registrar un equipo nuevo. |
+| `resources/views/encargado/equipos/edit.blade.php` | Formulario para editar un equipo existente. |
+| `resources/views/estudiante/dashboard.blade.php` | Panel del Estudiante: equipos disponibles para solicitar y sus préstamos para devolver. |
+| `resources/views/errors/base-datos.blade.php` | Página amigable que se muestra si la base de datos falla. |
+
+### Configuración y documentación
+
+| Archivo | ¿Para qué sirve? |
+| --- | --- |
+| `bootstrap/app.php` | Registra las rutas, el alias del middleware `rol` y el manejo global de errores de base de datos. |
+| `lang/es/auth.php` | Traduce al español los mensajes de autenticación (credenciales incorrectas, etc.). |
+| `.env.example` | Plantilla de configuración (base de datos, idioma `es`, sesiones en base de datos). |
+| `README.md` | Documentación del proyecto (este archivo). |
+
+### Pruebas
+
+| Archivo | ¿Para qué sirve? |
+| --- | --- |
+| `tests/Feature/EquipoCrudTest.php` | Verifica el registro de equipos y que un estudiante no pueda crear. |
+| `tests/Feature/PrestamoEquipoTest.php` | Verifica solicitar y devolver equipos, y los bloqueos de seguridad. |
 
 ---
 
@@ -249,14 +249,14 @@ bootstrap/app.php                          # Middleware y manejo de excepciones
 
 ---
 
-## 8. Tecnologías Utilizadas
+## 8. Tecnologías
 
 | Componente | Versión / Detalle |
 | --- | --- |
 | PHP | `^8.3` |
 | Laravel Framework | `^13.17` |
 | Laravel Breeze | `^2.4` (autenticación) |
-| Base de datos | MySQL / MariaDB |
+| Base de datos | MySQL / MariaDB (vía PDO) |
 | Frontend | Vite + Tailwind CSS + Alpine.js |
 | Pruebas | PHPUnit `^12.5` |
 | Formato de código | Laravel Pint |
