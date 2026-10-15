@@ -86,4 +86,24 @@ class EquipoCrudTest extends TestCase
 
         $response->assertRedirect(route('estudiante.dashboard'));
     }
+
+    public function test_el_panel_del_encargado_muestra_los_botones_de_crear_y_editar(): void
+    {
+        $encargado = User::factory()->create(['rol' => 'encargado']);
+
+        $equipo = Equipo::create([
+            'codigo' => 'LAP-500',
+            'nombre' => 'Equipo visible',
+            'categoria' => 'Laptop',
+            'estado' => 'Disponible',
+        ]);
+
+        $response = $this->actingAs($encargado)->get(route('encargado.dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('Crear equipo');
+        $response->assertSee('Editar');
+        $response->assertSee('Eliminar');
+        $response->assertSee(route('equipos.edit', $equipo), false);
+    }
 }
