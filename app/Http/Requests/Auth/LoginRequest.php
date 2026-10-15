@@ -10,6 +10,15 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * LoginRequest — FormRequest del inicio de sesión (Breeze).
+ *
+ * Demuestra la HERENCIA (extiende FormRequest) y personaliza:
+ *   - authorize(): autoriza la petición.
+ *   - rules(): valida 'email' y 'password'.
+ *   - authenticate(): intenta autenticar y aplica RateLimiter.
+ *   - ensureIsNotRateLimited(): bloquea tras 5 intentos fallidos.
+ */
 class LoginRequest extends FormRequest
 {
     /**

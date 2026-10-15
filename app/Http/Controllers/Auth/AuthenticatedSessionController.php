@@ -9,6 +9,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+/**
+ * AuthenticatedSessionController — inicio y cierre de sesión (Breeze).
+ *
+ * - create()/store(): muestra el login, autentica y REGENERA la sesión
+ *   (session()->regenerate()) para prevenir la fijación de sesión.
+ *   Tras entrar, redirige al panel según el rol (encargado o estudiante).
+ * - destroy(): cierra la sesión, la invalida y regenera el token CSRF.
+ */
 class AuthenticatedSessionController extends Controller
 {
     /**

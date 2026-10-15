@@ -4,6 +4,20 @@ use App\Http\Controllers\EquipoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Rutas web del sistema
+|--------------------------------------------------------------------------
+|
+| Organizadas por rol:
+|  - '/'            → redirige al login (ninguna página interna sin sesión).
+|  - '/dashboard'   → redirige al panel del rol autenticado.
+|  - 'encargado/*'  → middleware auth + rol:encargado (panel y CRUD).
+|  - 'estudiante/*' → middleware auth + rol:estudiante (panel, prestar, devolver).
+|  - '/profile'     → perfil y cuenta (Breeze).
+|
+*/
+
 // La raíz redirige al login: ninguna página interna sin sesión.
 Route::get('/', function () {
     return redirect()->route('login');

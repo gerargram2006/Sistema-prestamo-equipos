@@ -5,6 +5,16 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
+/**
+ * UserSeeder — carga los usuarios de prueba.
+ *
+ * Crea:
+ *  - 1 encargado:    encargado@tecsup.edu.pe    / encargado123
+ *  - 2 estudiantes:  estudiante1@ y estudiante2@tecsup.edu.pe / estudiante123
+ *
+ * La contraseña se guarda cifrada automáticamente gracias al cast 'hashed'
+ * del modelo User.
+ */
 class UserSeeder extends Seeder
 {
     /**

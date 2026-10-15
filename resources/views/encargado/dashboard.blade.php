@@ -1,3 +1,8 @@
+{{--
+    Vista: panel del Encargado (inventario).
+    - Lista todos los equipos ($equipos) con el estudiante que los tiene.
+    - Botón "Crear equipo" (equipos.create) y, por fila, Editar / Eliminar.
+--}}
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">

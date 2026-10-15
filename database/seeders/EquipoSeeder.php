@@ -5,6 +5,12 @@ namespace Database\Seeders;
 use App\Models\Equipo;
 use Illuminate\Database\Seeder;
 
+/**
+ * EquipoSeeder — carga 8 equipos de ejemplo.
+ *
+ * Incluye laptops, proyectores, kits Arduino y multímetros, todos en estado
+ * 'Disponible' para poder probar el flujo de préstamo.
+ */
 class EquipoSeeder extends Seeder
 {
     /**

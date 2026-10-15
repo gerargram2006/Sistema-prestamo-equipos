@@ -1,3 +1,8 @@
+{{--
+    Vista: página amigable de error de base de datos.
+    Se muestra cuando el manejador global captura una QueryException
+    (ver bootstrap/app.php). No usa la sesión ni la BD para renderizar.
+--}}
 <!DOCTYPE html>
 <html lang="es">
 <head>

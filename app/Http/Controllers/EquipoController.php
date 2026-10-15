@@ -7,6 +7,28 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
+/**
+ * EquipoController — Controlador principal del sistema.
+ *
+ * Aquí vive toda la lógica de los equipos, separada por rol:
+ *
+ *  ENCARGADO (CRUD):
+ *   - indexEncargado(): panel con el inventario completo.
+ *   - create()/store(): registrar un equipo nuevo.
+ *   - edit()/update(): editar un equipo existente.
+ *   - destroy(): eliminar un equipo (solo si no está prestado).
+ *
+ *  ESTUDIANTE:
+ *   - indexEstudiante(): equipos disponibles + mis préstamos.
+ *   - prestar(): solicitar un equipo disponible.
+ *   - devolver(): devolver un equipo propio.
+ *
+ * Técnicas aplicadas:
+ *   - Validación con $request->validate() y mensajes en español (mensajes()).
+ *   - Eloquent (Equipo::create/update/delete) → usa PDO con sentencias
+ *     preparadas, lo que evita la inyección SQL.
+ *   - try/catch de QueryException para mostrar errores amigables.
+ */
 class EquipoController extends Controller
 {
     /* ===================== ENCARGADO (CRUD) ===================== */

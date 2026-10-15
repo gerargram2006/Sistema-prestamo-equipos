@@ -4,6 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/*
+|--------------------------------------------------------------------------
+| Migración: usuarios, restablecer contraseña y sesiones
+|--------------------------------------------------------------------------
+| Crea las tablas:
+|  - users: incluye la columna 'rol' (encargado | estudiante).
+|  - password_reset_tokens: para recuperar la contraseña.
+|  - sessions: guarda las sesiones (SESSION_DRIVER=database).
+|
+*/
+
 return new class extends Migration
 {
     /**

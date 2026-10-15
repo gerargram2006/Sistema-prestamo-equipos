@@ -7,6 +7,13 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/**
+ * PrestamoEquipoTest — pruebas del flujo de préstamos.
+ *
+ * Verifica: solicitar un equipo, devolverlo, que no se pueda devolver el de
+ * otro estudiante ni solicitar uno ya prestado, y que un encargado no pueda
+ * solicitar equipos.
+ */
 class PrestamoEquipoTest extends TestCase
 {
     use RefreshDatabase;

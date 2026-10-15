@@ -7,6 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * CheckRole — Middleware personalizado de control de acceso por rol.
+ *
+ * Se registra con el alias 'rol' en bootstrap/app.php y se usa en las rutas:
+ *   Route::middleware(['auth', 'rol:encargado'])
+ *
+ * Comportamiento:
+ *   - Si no hay sesión iniciada → redirige al login.
+ *   - Si el rol no coincide → redirige al panel que sí le corresponde.
+ *   - Si coincide → deja pasar la petición ($next).
+ *
+ * El parámetro $rol puede ser 'encargado' o 'estudiante'.
+ */
 class CheckRole
 {
     /**

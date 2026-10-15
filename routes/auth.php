@@ -10,6 +10,17 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Rutas de autenticación (Breeze)
+|--------------------------------------------------------------------------
+|
+| Login, recuperación de contraseña, verificación de correo y cierre de sesión.
+| El registro público (/register) está DESACTIVADO: los usuarios se crean
+| con el seeder UserSeeder.
+|
+*/
+
 Route::middleware('guest')->group(function () {
     // Registro público desactivado: los usuarios se cargan por seeder.
     // Route::get('register', [RegisteredUserController::class, 'create'])

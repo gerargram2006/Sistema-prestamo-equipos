@@ -4,6 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/*
+|--------------------------------------------------------------------------
+| Migración: tabla "equipos"
+|--------------------------------------------------------------------------
+| Crea la tabla del inventario:
+|  - codigo: único (ej. LAP-001).
+|  - nombre y categoria.
+|  - estado: 'Disponible' o 'Prestado' (por defecto Disponible).
+|  - estudiante_id: clave foránea al usuario que lo tiene (null = libre).
+|
+*/
+
 return new class extends Migration
 {
     /**

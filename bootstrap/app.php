@@ -7,6 +7,19 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 
+/*
+|--------------------------------------------------------------------------
+| Arranque de la aplicación
+|--------------------------------------------------------------------------
+|
+| Configura:
+|  - Rutas web y de consola.
+|  - El alias del middleware de roles: 'rol' => CheckRole.
+|  - El manejo global de QueryException: si falla la base de datos, se muestra
+|    la vista amigable resources/views/errors/base-datos.blade.php.
+|
+*/
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',

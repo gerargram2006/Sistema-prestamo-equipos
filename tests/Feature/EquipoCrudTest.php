@@ -7,6 +7,13 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/**
+ * EquipoCrudTest — pruebas del CRUD y de los botones del panel del Encargado.
+ *
+ * Verifica: el formulario de creación, registrar disponible/prestado, el
+ * rechazo de códigos duplicados, que un estudiante no pueda crear, y que el
+ * panel muestre los botones Crear / Editar / Eliminar.
+ */
 class EquipoCrudTest extends TestCase
 {
     use RefreshDatabase;
